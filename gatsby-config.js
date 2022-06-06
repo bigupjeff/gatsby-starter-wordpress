@@ -5,7 +5,9 @@
  * https://www.gatsbyjs.com/docs/gatsby-config/
  *
  */
-
+require("dotenv").config({
+	path: `.env.${process.env.NODE_ENV}`,
+})
 module.exports = {
   /**
    * Adding plugins to this array adds them to your Gatsby site.
@@ -15,21 +17,43 @@ module.exports = {
    */
   plugins: [
     {
-      /**
-       * First up is the WordPress source plugin that connects Gatsby
-       * to your WordPress site.
-       *
-       * visit the plugin docs to learn more
-       * https://github.com/gatsbyjs/gatsby/blob/master/packages/gatsby-source-wordpress/README.md
-       *
-       */
-      resolve: `gatsby-source-wordpress`,
-      options: {
-        // the only required plugin option for WordPress is the GraphQL url.
-        url:
-          process.env.WPGRAPHQL_URL ||
-          `https://wpgatsbydemo.wpengine.com/graphql`,
-      },
+		/**
+		 * First up is the WordPress source plugin that connects Gatsby
+		 * to your WordPress site.
+		 *
+		 * visit the plugin docs to learn more
+		 * https://github.com/gatsbyjs/gatsby/blob/master/packages/gatsby-source-wordpress/README.md
+		 *
+		 */
+		resolve: `gatsby-source-wordpress`,
+		options: {
+			// the only required plugin option for WordPress is the GraphQL url.
+			url: process.env.WP_GRAPHQL_ENDPOINT_URL,
+			auth: {
+				// Only required if your WordPress site is behind Basic Auth.
+				htaccess: {
+					username: process.env.HTTPBASICAUTH_USERNAME,
+					password: process.env.HTTPBASICAUTH_PASSWORD,
+				}
+			},
+			html: {
+				// Causes the source plugin to find/replace images in html with Gatsby images.
+				useGatsbyImage: true,
+				// Determines the image quality that Sharp will use when generating inline html
+				// image thumbnails.
+				imageQuality: 90,
+				// When this is true, any url's which are wrapped in "", '', or () and which
+				// contain /wp-content/uploads will be transformed into static files and the
+				// url's will be rewritten. 
+				createStaticFiles: true,
+				// When this is true, .webp images will be generated for images in html fields
+				// in addition to the images gatsby-image normally generates.
+				generateWebpImages: true,
+				// This can be either "blurred" or "dominantColor". This is the type of
+				// placeholder image to be used in Gatsby Images in HTML fields.
+				placeholderType: "blurred",
+			},
+		},
     },
 
     /**
@@ -55,17 +79,17 @@ module.exports = {
     `gatsby-plugin-sharp`,
     `gatsby-plugin-image`,
     {
-      // See https://www.gatsbyjs.com/plugins/gatsby-plugin-manifest/?=gatsby-plugin-manifest
-      resolve: `gatsby-plugin-manifest`,
-      options: {
-        name: `Gatsby Starter WordPress Blog`,
-        short_name: `GatsbyJS & WP`,
-        start_url: `/`,
-        background_color: `#ffffff`,
-        theme_color: `#663399`,
-        display: `minimal-ui`,
-        icon: `content/assets/gatsby-icon.png`,
-      },
+		// See https://www.gatsbyjs.com/plugins/gatsby-plugin-manifest/?=gatsby-plugin-manifest
+		resolve: `gatsby-plugin-manifest`,
+		options: {
+			name: `Gatsby Starter WordPress Blog`,
+			short_name: `GatsbyJS & WP`,
+			start_url: `/`,
+			background_color: `#ffffff`,
+			theme_color: `#663399`,
+			display: `minimal-ui`,
+			icon: `content/assets/gatsby-icon.png`,
+		},
     },
 
     // See https://www.gatsbyjs.com/plugins/gatsby-plugin-react-helmet/?=gatsby-plugin-react-helmet
